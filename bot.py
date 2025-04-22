@@ -1,3 +1,4 @@
+# bot.py
 import os
 import asyncio
 from telegram import Update
@@ -40,8 +41,8 @@ async def cancelar(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Configuração cancelada.")
     return ConversationHandler.END
 
-async def main():
-    # Crie a instância do bot e inicie o polling
+# Renomeie a função para 'criar_bot'
+async def criar_bot():
     app = Application.builder().token(os.getenv("BOT_TOKEN")).build()
 
     conv_handler = ConversationHandler(
@@ -58,4 +59,4 @@ async def main():
     await app.run_polling()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(criar_bot())
