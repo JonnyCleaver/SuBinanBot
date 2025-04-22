@@ -41,7 +41,6 @@ async def cancelar(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Configuração cancelada.")
     return ConversationHandler.END
 
-# Renomeie a função para 'criar_bot'
 async def criar_bot():
     app = Application.builder().token(os.getenv("BOT_TOKEN")).build()
 
@@ -57,6 +56,3 @@ async def criar_bot():
 
     # Isso vai rodar o polling do bot
     await app.run_polling()
-
-if __name__ == "__main__":
-    asyncio.run(criar_bot())
