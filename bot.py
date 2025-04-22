@@ -1,14 +1,12 @@
-# bot.py
 import os
-import asyncio
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, ConversationHandler
 from telegram import Update
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ConversationHandler, ContextTypes
-import requests
+from telegram.ext import ContextTypes
 
 API_KEY, API_SECRET = range(2)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Bem-vindo! Use /configurar para enviar sua API Key da Binance.")
+    await update.message.reply_text("Bem-vindo ao bot! Use /configurar para configurar sua chave API.")
 
 async def configurar(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Digite sua API Key:")
@@ -16,7 +14,7 @@ async def configurar(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def receber_api_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['api_key'] = update.message.text
-    await update.message.reply_text("Agora envie sua API Secret:")
+    await update.message.reply_text("Agora, envie sua API Secret:")
     return API_SECRET
 
 async def receber_api_secret(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -46,8 +44,10 @@ async def criar_bot():
 
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("configurar", configurar)],
-        states={API_KEY: [MessageHandler(filters.TEXT & ~filters.COMMAND, receber_api_key)],
-                API_SECRET: [MessageHandler(filters.TEXT & ~filters.COMMAND, receber_api_secret)]},
+        states={
+            API_KEY: [MessageHandler(filters.TEXT & ~filters.COMMAND, receber_api_key)],
+            API_SECRET: [MessageHandler(filters.TEXT & ~filters.COMMAND, receber_api_secret)],
+        },
         fallbacks=[CommandHandler("cancelar", cancelar)],
     )
 
