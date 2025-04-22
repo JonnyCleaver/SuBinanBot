@@ -1,6 +1,7 @@
 # main.py
 import os
 import threading
+import asyncio
 from bot import criar_bot
 from flask import Flask
 
@@ -8,7 +9,9 @@ app = Flask(__name__)
 
 def start_bot():
     # Criar e iniciar o bot em um thread separado
-    threading.Thread(target=criar_bot, daemon=True).start()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(criar_bot())
 
 @app.route('/')
 def index():
