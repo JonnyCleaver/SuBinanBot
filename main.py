@@ -1,17 +1,19 @@
-import asyncio
+# main.py
+import os
 import threading
 from bot import criar_bot
-from server import app as flask_app  # app Flask no server.py
+from flask import Flask
+
+app = Flask(__name__)
 
 def start_bot():
-    asyncio.run(_start_bot())
+    # Criar e iniciar o bot em um thread separado
+    threading.Thread(target=criar_bot, daemon=True).start()
 
-async def _start_bot():
-    app = await criar_bot()
-    await app.initialize()
-    await app.start()
-    print("🤖 Bot do Telegram iniciado com sucesso!")
+@app.route('/')
+def index():
+    return "Bot está rodando!"
 
 if __name__ == "__main__":
-    threading.Thread(target=start_bot, daemon=True).start()
-    flask_app.run(host="0.0.0.0", port=10000)
+    start_bot()  # Inicia o bot em um thread
+    app.run(host='0.0.0.0', port=10000)
