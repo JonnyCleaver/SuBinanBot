@@ -39,8 +39,7 @@ async def cancelar(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Configuração cancelada.")
     return ConversationHandler.END
 
-# 👇 Agora é uma função async!
-async def iniciar_bot():
+async def criar_bot():
     app = Application.builder().token(os.getenv("BOT_TOKEN")).build()
 
     conv_handler = ConversationHandler(
@@ -55,4 +54,4 @@ async def iniciar_bot():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(conv_handler)
 
-    await app.run_polling()
+    return app
