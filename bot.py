@@ -1,7 +1,7 @@
-
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ConversationHandler, ContextTypes
 import requests
+import os
 
 API_KEY, API_SECRET = range(2)
 
@@ -22,7 +22,8 @@ async def receber_api_secret(update: Update, context: ContextTypes.DEFAULT_TYPE)
     api_secret = update.message.text
     user_id = update.effective_user.id
 
-    response = requests.post("https://SEU_DOMINIO_RENDER/configurar_keys", json={
+    url = "https://subinanbot.onrender.com/configurar_keys"
+    response = requests.post(url, json={
         "user_id": user_id,
         "api_key": api_key,
         "api_secret": api_secret
@@ -38,18 +39,19 @@ async def cancelar(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Configuração cancelada.")
     return ConversationHandler.END
 
-app = Application.builder().token("SEU_TOKEN_DO_BOT").build()
+def iniciar_bot():
+    app = Application.builder().token(os.getenv("BOT_TOKEN")).build()
 
-conv_handler = ConversationHandler(
-    entry_points=[CommandHandler("configurar", configurar)],
-    states={
-        API_KEY: [MessageHandler(filters.TEXT & ~filters.COMMAND, receber_api_key)],
-        API_SECRET: [MessageHandler(filters.TEXT & ~filters.COMMAND, receber_api_secret)],
-    },
-    fallbacks=[CommandHandler("cancelar", cancelar)],
-)
+    conv_handler = ConversationHandler(
+        entry_points=[CommandHandler("configurar", configurar)],
+        states={
+            API_KEY: [MessageHandler(filters.TEXT & ~filters.COMMAND, receber_api_key)],
+            API_SECRET: [MessageHandler(filters.TEXT & ~filters.COMMAND, receber_api_secret)],
+        },
+        fallbacks=[CommandHandler("cancelar", cancelar)],
+    )
 
-app.add_handler(CommandHandler("start", start))
-app.add_handler(conv_handler)
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(conv_handler)
 
-app.run_polling()
+    app.run_polling()
